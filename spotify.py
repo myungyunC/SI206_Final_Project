@@ -19,9 +19,9 @@ class Spotify:
         # Get Authorization Token
         self.credentials = oauth2.SpotifyClientCredentials(client_id=id,
                                                            client_secret=secret)
-        # self.token = self.credentials.get_access_token()
+        self.token = self.credentials.get_access_token()
         # print(self.token)
-        self.token = "BQDsANVnfNXFHSIfmK8KtXJ7TPovXzhPSgL_DmWaQTBChX6C-f_foj4Spz_OyT4vwWW8RxAdEutv0cFPXFI"
+        # self.token = "BQDsANVnfNXFHSIfmK8KtXJ7TPovXzhPSgL_DmWaQTBChX6C-f_foj4Spz_OyT4vwWW8RxAdEutv0cFPXFI"
         self.spotify = spotipy.Spotify(auth=self.token)
 
     def _get_headers(self):
@@ -51,20 +51,16 @@ class Spotify:
         Returns: list of IDs
         """
         ids = []
-        uris = []
 
         response = requests.get(playlist_href, headers=self._get_headers())
-        self._check_for_response_errors(response)
         response = response.json()
 
         for track in response["tracks"]["items"]:
-            # Get max 100 tracks
-            if len(ids) == 100:
+            # Get max 20 tracks
+            if len(ids) == 20:
                 break
             track_id = track['track']['id']
-            track_uri = track['track']['uri']
-            if track_id is not None and track_uri is not None: # sometimes track id is None apparently, but we don't want that
+            if track_id is not None:
                 ids.append(track_id)
-                uris.append(track_uri)
 
-        return ids, uris
+        return ids
