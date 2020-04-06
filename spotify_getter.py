@@ -78,6 +78,7 @@ def get_spotify_data(keywords, num_playlists):
         write_playlists_to_database(SpotifyMaster, playlists)
         playlist_table_size = return_table_len("Playlists")
         print("Playlist table size: " + str(playlist_table_size))
+
         return
     
     # Otherwise, start getting tracks
@@ -88,7 +89,11 @@ def write_playlists_to_database(SpotifyMaster, playlists):
     print("Number of playlists: " + str(len(playlists)))
     # Connecting to the database  
     connection = sqlite3.connect("Databases.db") 
-    cur = connection.cursor() 
+    cur = connection.cursor()
+
+    # Cache playlist href to get tracks later
+    cache_dict = json_helper.read_cache()
+    playlist_hrefs = cache_dict.get("playlist_hrefs", [])
     
     # Write each playlist into the database
     for playlist in playlists:
@@ -107,7 +112,13 @@ def write_playlists_to_database(SpotifyMaster, playlists):
                         values (?,?,?)
                     """
         cur.execute(sql_command, playlist_data) 
-        connection.commit() 
+        connection.commit()
+
+        # Append playlist href to list of hrefs
+        playlist_hrefs.append(playlist["href"])
+
+    cache_dict["playlist_hrefs"] = playlist_hrefs
+    json_helper.write_cache(cache_dict)
     connection.close()
 
 def write_tracks_to_database(SpotifyMaster, tracks):
