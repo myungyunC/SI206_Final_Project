@@ -6,17 +6,10 @@ import spotipy.oauth2 as oauth2
 class Spotify:
     """Main class to handle all Spotify API calls."""
 
-    URLs = {'AUDIO_FEATURES': 'https://api.spotify.com/v1/audio-features/',
-            'ARTIST_TOP_SONG': 'https://api.spotify.com/v1/artists/{}/top-tracks',
-            'CREATE_PLAYLIST': 'https://api.spotify.com/v1/users/{}/playlists',
-            'PAUSE': 'https://api.spotify.com/v1/me/player/pause',
-            'PLAY': 'https://api.spotify.com/v1/me/player/play',
-            'PLAYLIST': 'https://api.spotify.com/v1/playlists/{}',
+    URLs = {'PLAYLIST': 'https://api.spotify.com/v1/playlists/{}',
             'PLAYLIST_TRACKS': 'https://api.spotify.com/v1/playlists/{}/tracks',
             'SEARCH': 'https://api.spotify.com/v1/search',
-            'SKIP': 'https://api.spotify.com/v1/me/player/next',
-            'TRACKS': 'https://api.spotify.com/v1/tracks/',
-            'USER_PROFILE': 'https://api.spotify.com/v1/me'}
+            'TRACKS': 'https://api.spotify.com/v1/tracks/'}
 
     def __init__(self, id, secret):
         """Initializer for Spotify class."""
@@ -27,19 +20,13 @@ class Spotify:
         self.credentials = oauth2.SpotifyClientCredentials(client_id=id,
                                                            client_secret=secret)
         # self.token = self.credentials.get_access_token()
-        self.token = "BQD-80EFP2O9LfrwAY8kksEumjBryZMrz56piEURh4Ms0Q7MsTzquiUqIfjOdB_jU4jmfSfSVKw_MNXTKTQ"
+        # print(self.token)
+        self.token = "BQDsANVnfNXFHSIfmK8KtXJ7TPovXzhPSgL_DmWaQTBChX6C-f_foj4Spz_OyT4vwWW8RxAdEutv0cFPXFI"
         self.spotify = spotipy.Spotify(auth=self.token)
 
     def _get_headers(self):
         """Format header for spotify Api request."""
         return {'Authorization': "Bearer {}".format(self.token)}
-
-    def _check_for_response_errors(self, response):
-        """Check response for any error codes."""
-        if response.status_code >= 400:
-            caller_name = inspect.stack()[1].function
-            print("ERROR on {}".format(caller_name))
-            print(response.text)
 
     def search(self, query, s_type):
         """
@@ -55,7 +42,6 @@ class Spotify:
 
         r = requests.get(self.URLs['SEARCH'], headers=self._get_headers(),
                          params=payload)
-        self._check_for_response_errors(r)
         return r.json()
 
     def get_tracks_from_playlist(self, playlist_href):
@@ -80,14 +66,5 @@ class Spotify:
             if track_id is not None and track_uri is not None: # sometimes track id is None apparently, but we don't want that
                 ids.append(track_id)
                 uris.append(track_uri)
-
-        return ids, uris
-
-    def search_for_playlists(self, keyword):
-        """Search for playlists in Spotify given list of keywords."""
-        results = self.search(keyword, 'playlist')
-        url = results['playlists']['items'][0]['href']
-
-        ids, uris = self.get_tracks_from_playlist(url)
 
         return ids, uris
