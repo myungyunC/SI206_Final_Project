@@ -6,10 +6,9 @@ import spotipy.oauth2 as oauth2
 class Spotify:
     """Main class to handle all Spotify API calls."""
 
-    URLs = {'PLAYLIST': 'https://api.spotify.com/v1/playlists/{}',
-            'PLAYLIST_TRACKS': 'https://api.spotify.com/v1/playlists/{}/tracks',
-            'SEARCH': 'https://api.spotify.com/v1/search',
-            'TRACKS': 'https://api.spotify.com/v1/tracks/'}
+    URLs = {'SEARCH': 'https://api.spotify.com/v1/search',
+            'TRACKS': 'https://api.spotify.com/v1/tracks/',
+            'FEATURES': 'https://api.spotify.com/v1/audio-features/'}
 
     def __init__(self, id, secret):
         """Initializer for Spotify class."""
@@ -57,10 +56,25 @@ class Spotify:
 
         for track in response["tracks"]["items"]:
             # Get max 20 tracks
-            if len(ids) == 20:
+            if len(ids) == 10:
                 break
             track_id = track['track']['id']
             if track_id is not None:
                 ids.append(track_id)
 
         return ids
+
+    def get_track_data(self, s_type, track_id):
+        """Returns Spotify API search result for a track. """
+        payload = {}
+
+        # Get track data
+        url = self.URLs['TRACKS'] + track_id
+
+        # Get track features data if passed in
+        if s_type == "features":
+            url = self.URLs['FEATURES'] + track_id
+
+        r = requests.get(url, headers=self._get_headers(),
+                         params=payload)
+        return r.json()

@@ -14,8 +14,9 @@ def delete_table(table_name):
     connection.close() 
 
 def main():
-    table_name = "Playlists"
-    delete_table(table_name)
+    delete_table("Playlists")
+    delete_table("Tracks")
+    delete_table("TrackFeatures")
 
 
 if __name__ == '__main__':
