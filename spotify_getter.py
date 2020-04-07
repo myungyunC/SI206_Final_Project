@@ -11,10 +11,12 @@ CLIENT_SECRET = "bb2280621c164b7c9b9857571d1ced62"
 
 def get_news_keywords():
     """Retrieve keywords from table created from data from Google News API"""
-
     # Get list of top keywords from JSON
+    cache_dict = json_helper.read_cache()
+    category_top_keywords = cache_dict.get("category_top_keywords",
+                                           ["Coronavirus", "China", "Trump", "Economy"])
 
-    return ["Coronavirus", "China", "Trump", "Economy"]
+    return category_top_keywords
 
 
 def create_databases():
@@ -79,7 +81,7 @@ def get_spotify_data(keywords, num_playlists):
 
     # Only retrieve playlists if not at num_playlists
     playlist_table_size = return_table_len("Playlists")
-    if playlist_table_size != num_playlists:
+    if playlist_table_size < num_playlists - 10:
         # Pull playlist data a keyword
         print("Getting Spotify playlists")
         cache_dict = json_helper.read_cache()
