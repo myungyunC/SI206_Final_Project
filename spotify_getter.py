@@ -102,6 +102,13 @@ def get_spotify_data(keywords, num_playlists):
     
     # Otherwise, start getting tracks until reach limit
     tracks_table_size = return_table_len("Tracks")
+    track_features_table_size = return_table_len("TrackFeatures")
+
+    # Finish if over 100 rows for either
+    if tracks_table_size > 120 and track_features_table_size > 120:
+        print("Gathered sufficient data for the database.")
+        return
+
     if tracks_table_size != num_playlists * 10:
         print("Getting Spotify Tracks")
 
@@ -119,6 +126,7 @@ def get_spotify_data(keywords, num_playlists):
                                               playlist_href,
                                               playlist_href_index + 1)
         print("Tracks table size: " + str(tracks_table_size))
+        print("Track Features table size: " + str(track_features_table_size))
         
         return
     
