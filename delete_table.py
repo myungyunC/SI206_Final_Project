@@ -1,4 +1,5 @@
 import sqlite3
+import json_helper
 
 def delete_table(table_name):
     """Delete the passed in table in the database."""
@@ -14,10 +15,16 @@ def delete_table(table_name):
     connection.close() 
 
 def main():
+    # Delete tables
     delete_table("Playlists")
     delete_table("Tracks")
     delete_table("TrackFeatures")
     delete_table("ArticleData")
+
+    # Clear JSON data
+    cache_dict = json_helper.read_cache()
+    cache_dict = {}
+    json_helper.write_cache(cache_dict)
 
 
 if __name__ == '__main__':

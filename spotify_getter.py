@@ -54,8 +54,8 @@ def create_databases():
                         (track_id INTEGER PRIMARY KEY,
                          track_name TEXT UNIQUE,
                          track_artist TEXT,
-                         playlist_href TEXT,
-                         FOREIGN KEY(playlist_href) REFERENCES Playlists(playlist_href));
+                         playlist_id INTEGER,
+                         FOREIGN KEY(playlist_id) REFERENCES Playlists(playlist_id));
                   """
     cur.execute(sql_command) 
 
@@ -114,7 +114,10 @@ def get_spotify_data(keywords, num_playlists):
 
         # Get track ids from the playlist and write to database
         track_ids = SpotifyMaster.get_tracks_from_playlist(playlist_href)
-        write_tracks_and_features_to_database(SpotifyMaster, track_ids, playlist_href)
+        write_tracks_and_features_to_database(SpotifyMaster,
+                                              track_ids,
+                                              playlist_href,
+                                              playlist_href_index + 1)
         print("Tracks table size: " + str(tracks_table_size))
         
         return
@@ -188,7 +191,7 @@ def get_top_two_features(track_features):
     top_two = [sorted_features[0][0], sorted_features[0][1], sorted_features[1][0], sorted_features[1][1]]
     return top_two
 
-def write_tracks_and_features_to_database(SpotifyMaster, track_ids, playlist_href):
+def write_tracks_and_features_to_database(SpotifyMaster, track_ids, playlist_href, playlist_id):
     """Write tracks to the SQLite database. 10 tracks and 10 track features"""
     print("Number of tracks: " + str(len(track_ids)))
 
@@ -202,14 +205,14 @@ def write_tracks_and_features_to_database(SpotifyMaster, track_ids, playlist_hre
         json_track_result = SpotifyMaster.get_track_data("track", track_id)
         name = json_track_result["name"]
         artist = json_track_result["artists"][0]["name"]
-        track_data = [name, artist, playlist_href]
+        track_data = [name, artist, playlist_id]
 
         # Insert track into databse
         sql_command = """
                         INSERT OR IGNORE INTO Tracks 
                             (track_name, 
                              track_artist, 
-                             playlist_href) 
+                             playlist_id) 
                         values (?,?,?)
                     """
         cur.execute(sql_command, track_data)
