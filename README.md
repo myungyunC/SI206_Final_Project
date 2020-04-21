@@ -29,6 +29,13 @@ Spotify Playlists and Tracks data - repeat until finished.
 python3 spotify_getter.py
 ```
 
+### Process the Data
+
+This will process the data by:
+  - The top 10 most common keywords and their count
+  - The most frequently occuring songs among the playlists
+  - The most popular track features among the playlists
+
 
 ## Authors
 * **Myungyun Chung**
