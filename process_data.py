@@ -43,48 +43,44 @@ def process_data():
     
     cur.execute(sql_query_3)
     data = cur.fetchall()
+
+    """TAKE THIS FAKE DATA OUT WHEN DATABASE IS UPDATED AND CHANGE QUERY TO TOTAL SONGS"""
+    data = [(1,),(5,),(11,),(21,),(31,),(34,),(45,),(55,)]
+
     for tup in data:
         amount = tup[0]
         if amount > 50:
-            playlist_lengths['50+'] = playlist_lengths.get(tup[0], 0) + 1
+            playlist_lengths['50+'] += 1
         elif amount > 40:
-            playlist_lengths['41-50'] = playlist_lengths.get(tup[0], 0) + 1
+            playlist_lengths['41-50'] += 1
         elif amount > 30:
-            playlist_lengths['31-40'] = playlist_lengths.get(tup[0], 0) + 1
+            playlist_lengths['31-40'] += 1
         elif amount > 20:
-            playlist_lengths['21-30'] = playlist_lengths.get(tup[0], 0) + 1
+            playlist_lengths['21-30'] += 1
         elif amount > 10:
-            playlist_lengths['11-20'] = playlist_lengths.get(tup[0], 0) + 1
+            playlist_lengths['11-20'] += 1
         else:
-            playlist_lengths['0-10'] = playlist_lengths.get(tup[0], 0) + 1
+            playlist_lengths['0-10'] += 1
 
-    playlist_lenghts = sorted(list(playlist_lengths.items()))
+    playlist_lengthts = sorted(list(playlist_lengths.items()))
 
-    print(data)
+
+    print(playlist_lengths)
 
     """
         Processings the top features among the songs in the playlists
-
-    
-    Take care of the other ones and visualizations then get to this step.
-
-    JOIN Tracks and TrackFeatures on song_name 
+        JOIN Tracks and TrackFeatures on song_name 
 
     for i in range (max in column playlists)
         SELECT * WHERE PLAYLIST_ID = 1 
-        FIND MOST COMMON GENRE
-
-        Add to dictionary: genre: 1
-
+        FIND MOST COMMON FEATURE
+        Add to dictionary: feature: 1
     then next playlist
-        FIND MOST COMMON genre: 2
-
+        FIND MOST COMMON FEATURE: 2
         Should end up with {genre1: 1, genre2: 3, genre3: 4} etc.
-
-
         Extra Credit: Processing the top songs in all of the playlists
     """
-    
+
     print("Processed data")
 
 def main():
