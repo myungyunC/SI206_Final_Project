@@ -32,6 +32,14 @@ def process_data():
         keywords[tup[0]] = keywords.get(tup[0], 0) + tup[1]
 
     keywords = sorted(list(keywords.items()), key=lambda tup:tup[1], reverse=True)[:10]
+    
+
+    f = open("keywords.csv", "w")
+    f.write("keyword,occurance\n")
+
+    for words in keywords:
+        f.write(f'{words[0]},{words[1]}')
+        f.write("\n")
 
     
     """Get lengths of all playlists and their occurence"""
@@ -62,23 +70,28 @@ def process_data():
         else:
             playlist_lengths['0-10'] += 1
 
-    playlist_lengthts = sorted(list(playlist_lengths.items()))
+    playlist_lengths = sorted(list(playlist_lengths.items()))
 
+    f = open("playlist_lengths.csv", "w")
+    f.write("playlist_range,total\n")
 
-    print(playlist_lengths)
+    for playlist_range in playlist_lengths:
+        f.write(f'{playlist_range[0]},{playlist_range[1]}')
+        f.write("\n")
 
-    """
-        Processings the top features among the songs in the playlists
-        JOIN Tracks and TrackFeatures on song_name 
+    """for word in playlist_lengths:
+        
+    Processings the top features among the songs in the playlists
+    JOIN Tracks and TrackFeatures on song_name 
 
     for i in range (max in column playlists)
-        SELECT * WHERE PLAYLIST_ID = 1 
-        FIND MOST COMMON FEATURE
-        Add to dictionary: feature: 1
+    SELECT * WHERE PLAYLIST_ID = 1 
+    FIND MOST COMMON FEATURE
+    Add to dictionary: feature: 1
     then next playlist
-        FIND MOST COMMON FEATURE: 2
-        Should end up with {genre1: 1, genre2: 3, genre3: 4} etc.
-        Extra Credit: Processing the top songs in all of the playlists
+    FIND MOST COMMON FEATURE: 2
+    Should end up with {genre1: 1, genre2: 3, genre3: 4} etc.
+    Extra Credit: Processing the top songs in all of the playlists
     """
 
     print("Processed data")
