@@ -8,7 +8,8 @@ class Spotify:
 
     URLs = {'SEARCH': 'https://api.spotify.com/v1/search',
             'TRACKS': 'https://api.spotify.com/v1/tracks/',
-            'FEATURES': 'https://api.spotify.com/v1/audio-features/'}
+            'FEATURES': 'https://api.spotify.com/v1/audio-features/',
+            'PLAYLIST': 'https://api.spotify.com/v1/playlists/'}
 
     def __init__(self, id, secret):
         """Initializer for Spotify class."""
@@ -64,17 +65,23 @@ class Spotify:
 
         return ids
 
-    def get_track_data(self, s_type, track_id):
-        """Returns Spotify API search result for a track. """
+    def get_data(self, s_type, id):
+        """Returns Spotify API search result for given type and ID. """
         payload = {}
 
         # Get track data
-        url = self.URLs['TRACKS'] + track_id
+        url = self.URLs['TRACKS'] + id
 
         # Get track features data if passed in
         if s_type == "features":
-            url = self.URLs['FEATURES'] + track_id
+            url = self.URLs['FEATURES'] + id
+
+        # Get playlist feature if passed in
+        if s_type == "playlist":
+            url = self.URLs['PLAYLIST'] + id
 
         r = requests.get(url, headers=self._get_headers(),
                          params=payload)
         return r.json()
+
+
