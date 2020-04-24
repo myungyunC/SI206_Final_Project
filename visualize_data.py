@@ -12,3 +12,8 @@ plt.show()
 playlist_length_data = pd.read_csv("playlist_lengths.csv")
 sns.barplot(x="playlist_range",y="total",data=playlist_length_data).set_title('Categorical Representation of Playlist Lengths of all Playlists')
 plt.show()
+
+# Categorical Representation of Most Popular Feature among songs in Each Playlist
+feature_data = pd.read_csv("features.csv")
+sns.barplot(x="feature",y="total",data=feature_data).set_title('Categorical Representation of Most Popular Features among all Playlists')
+plt.show()

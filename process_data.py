@@ -76,20 +76,36 @@ def process_data():
         f.write(f'{playlist_range[0]},{playlist_range[1]}')
         f.write("\n")
 
-    """for word in playlist_lengths:
-        
-    Processings the top features among the songs in the playlists
-    JOIN Tracks and TrackFeatures on song_name 
 
-    for i in range (max in column playlists)
-    SELECT * WHERE PLAYLIST_ID = 1 
-    FIND MOST COMMON FEATURE
-    Add to dictionary: feature: 1
-    then next playlist
-    FIND MOST COMMON FEATURE: 2
-    Should end up with {genre1: 1, genre2: 3, genre3: 4} etc.
-    Extra Credit: Processing the top songs in all of the playlists
-    """
+    """Get most common feature of each playlist"""
+    sql_query_4 = """SELECT MAX(playlist_id) FROM Tracks"""
+    cur.execute(sql_query_4)
+    data = cur.fetchall()
+    max_playlists = data[0][0]
+    
+    features = {}
+
+    for i in range(1, max_playlists + 1):
+        sql_query_5 = f"""
+                SELECT Tracks.playlist_id, Tracks.track_name, TrackFeatures.first_feature
+                FROM Tracks JOIN TrackFeatures ON Tracks.track_name = TrackFeatures.track_name 
+                WHERE playlist_id = {i}"""
+        cur.execute(sql_query_5)
+        data = cur.fetchall()
+        current_playlist_features = {}
+        for tup in data:
+            feature = tup[2]
+            current_playlist_features[feature] = current_playlist_features.get(feature, 0) + 1
+        most_popular_feature = sorted(list(current_playlist_features.items()),key=lambda tup:tup[1],reverse=True)[0][0]
+        features[most_popular_feature] = features.get(most_popular_feature, 0) + 1
+
+    features_list = sorted(list(features.items()), key=lambda tup:tup[1], reverse=True)
+
+    f = open("features.csv", "w")
+    f.write("feature,total\n")
+    for feature in features_list:
+        f.write(f'{feature[0]},{feature[1]}')
+        f.write("\n")
 
     print("Processed data")
 
