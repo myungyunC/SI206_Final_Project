@@ -77,6 +77,8 @@ def get_google_news_data():
     print("top keyword: " + top_keyword)
     if top_keyword not in category_top_keywords:
         category_top_keywords.append(top_keyword)
+    else:
+        category_top_keywords.append("virus")
     cache_dict["category_top_keywords"] = category_top_keywords
     json_helper.write_cache(cache_dict) 
 

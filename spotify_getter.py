@@ -44,7 +44,8 @@ def create_databases():
                          playlist_name TEXT UNIQUE,  
                          playlist_owner TEXT, 
                          playlist_desc TEXT,
-                         playlist_href TEXT UNIQUE);
+                         playlist_href TEXT UNIQUE,
+                         playlist_size INTEGER);
                   """
     cur.execute(sql_command) 
 
@@ -52,7 +53,7 @@ def create_databases():
     sql_command = """
                     CREATE TABLE IF NOT EXISTS Tracks 
                         (track_id INTEGER PRIMARY KEY,
-                         track_name TEXT UNIQUE,
+                         track_name TEXT,
                          track_artist TEXT,
                          playlist_id INTEGER,
                          FOREIGN KEY(playlist_id) REFERENCES Playlists(playlist_id));
@@ -151,7 +152,14 @@ def write_playlists_to_database(SpotifyMaster, playlists):
         owner = playlist["owner"]["id"]
         desc = playlist["description"]
         href = playlist["href"]
-        playlist_data = [name, owner, desc, href]
+
+        # Get total number of tracks in the playlist
+        id = playlist["id"]
+        playlist_data = SpotifyMaster.get_data("playlist", id)
+        total_tracks = playlist_data["tracks"]["total"]
+        # print("Playlist Size:\t" + str(total_tracks))
+
+        playlist_data = [name, owner, desc, href, total_tracks]
 
         # Insert playlist into database
         sql_command = """
@@ -159,8 +167,9 @@ def write_playlists_to_database(SpotifyMaster, playlists):
                             (playlist_name, 
                              playlist_owner, 
                              playlist_desc,
-                             playlist_href) 
-                        values (?,?,?,?)
+                             playlist_href,
+                             playlist_size) 
+                        values (?,?,?,?, ?)
                     """
         cur.execute(sql_command, playlist_data) 
 
@@ -210,14 +219,14 @@ def write_tracks_and_features_to_database(SpotifyMaster, track_ids, playlist_hre
     # Write each track and feature data into the database
     for track_id in track_ids:
         # Get necessary track metadata
-        json_track_result = SpotifyMaster.get_track_data("track", track_id)
+        json_track_result = SpotifyMaster.get_data("track", track_id)
         name = json_track_result["name"]
         artist = json_track_result["artists"][0]["name"]
         track_data = [name, artist, playlist_id]
 
         # Insert track into databse
         sql_command = """
-                        INSERT OR IGNORE INTO Tracks 
+                        INSERT INTO Tracks 
                             (track_name, 
                              track_artist, 
                              playlist_id) 
@@ -226,7 +235,7 @@ def write_tracks_and_features_to_database(SpotifyMaster, track_ids, playlist_hre
         cur.execute(sql_command, track_data)
 
         # Get top track feature
-        json_features_result = SpotifyMaster.get_track_data("features", track_id)
+        json_features_result = SpotifyMaster.get_data("features", track_id)
         features_data = [name] + get_top_two_features(json_features_result)
 
         # Insert track feature into databse
