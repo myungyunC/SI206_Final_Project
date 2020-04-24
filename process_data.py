@@ -43,34 +43,31 @@ def process_data():
 
     
     """Get lengths of all playlists and their occurence"""
-    playlist_lengths = {"0-10":0,"11-20":0,"21-30":0,"31-40":0,"41-50":0,"50+":0}
+    playlist_lengths = {"0-20":0,"21-40":0,"41-60":0,"61-80":0,"81-100":0,"100+":0}
 
     sql_query_3 = """
-                select playlist_name from PLAYLISTS
+                select playlist_size from PLAYLISTS
                 """
     
     cur.execute(sql_query_3)
     data = cur.fetchall()
 
-    """TAKE THIS FAKE DATA OUT WHEN DATABASE IS UPDATED AND CHANGE QUERY TO TOTAL SONGS"""
-    data = [(1,),(5,),(11,),(21,),(31,),(34,),(45,),(55,)]
-
     for tup in data:
         amount = tup[0]
-        if amount > 50:
-            playlist_lengths['50+'] += 1
+        if amount > 100:
+            playlist_lengths['100+'] += 1
+        elif amount > 80:
+            playlist_lengths['81-100'] += 1
+        elif amount > 60:
+            playlist_lengths['61-80'] += 1
         elif amount > 40:
-            playlist_lengths['41-50'] += 1
-        elif amount > 30:
-            playlist_lengths['31-40'] += 1
+            playlist_lengths['41-60'] += 1
         elif amount > 20:
-            playlist_lengths['21-30'] += 1
-        elif amount > 10:
-            playlist_lengths['11-20'] += 1
+            playlist_lengths['21-40'] += 1
         else:
-            playlist_lengths['0-10'] += 1
+            playlist_lengths['0-20'] += 1
 
-    playlist_lengths = sorted(list(playlist_lengths.items()))
+    playlist_lengths = list(playlist_lengths.items())
 
     f = open("playlist_lengths.csv", "w")
     f.write("playlist_range,total\n")
