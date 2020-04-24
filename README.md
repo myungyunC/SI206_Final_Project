@@ -34,10 +34,18 @@ python3 spotify_getter.py
 This will process the data by:
   - The top 10 most common keywords and their count
   - The top 10 most frequently occuring songs among the playlists and their count
-  - A pie chart of the features that occur among all of the songs of all of the playlists
+  - The features that occur among all of the songs of all of the playlists
 
 ```
 python3 process_data.py
+```
+
+### Visualize the data
+
+This will visualize the data previously processed:
+
+```
+python3 visualize_data.py
 ```
 
 
