@@ -1,4 +1,3 @@
-import numpy as numpy
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -17,8 +16,20 @@ def visualize_lengths():
 
 def visualize_features():
     # Categorical Representation of Most Popular Feature among songs in Each Playlist
-    feature_data = pd.read_csv("features.csv")
-    sns.barplot(x="feature",y="total",data=feature_data).set_title('Categorical Representation of Most Popular Features among all Playlists')
+    labels = []
+    sizes = []
+    with open("features.csv", "r") as feature_data:
+        fd = feature_data.readlines()
+        for i in range(len(fd)):
+            if i == 0:
+                continue
+            labels.append(fd[i].split(',')[0])
+            sizes.append(fd[i].split(',')[1])
+    fig1, ax1 = plt.subplots()
+    ax1.pie(sizes, labels=labels, autopct='%1.1f%%',
+            shadow=True, startangle=90)
+    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    plt.title('Categorical Representation of Most Popular Features among all Playlists')
     plt.show()
 
 def main():
